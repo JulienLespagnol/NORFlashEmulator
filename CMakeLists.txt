@@ -9,7 +9,14 @@ add_executable(main ${SRCS_MAIN})
 
 # unit tests target
 set(SRCS_TEST
-test/main.c)
+nor_flash_emulator.c
+test/main.c
+munit/munit.c
+test/init_tests.c)
+
+set(HEADERS_TEST
+munit/munit.h
+nor_flash_emulator.h)
 
 include_directories(test)
-add_executable(test ${SRCS_TEST})
+add_executable(test ${SRCS_TEST} ${HEADERS_TEST})
