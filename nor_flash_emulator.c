@@ -71,6 +71,11 @@ nor_flash_emulator_handler *nor_flash_emulator_init(nor_flash_emulator_params *p
                                     ((pflash->params->sector_size % pflash->params->subsector_size) == 0) &&
                                     ((pflash->params->subsector_size % pflash->params->page_size) == 0))
                                 {
+                                    pflash->number_of_sector = pflash->params->flash_size / pflash->params->sector_size;
+                                    pflash->number_of_subtector_per_sector = pflash->params->sector_size / pflash->params->subsector_size;
+                                    pflash->total_number_of_subsector = pflash->params->flash_size / pflash->params->subsector_size;
+                                    pflash->number_of_page_per_subsector = pflash->params->subsector_size / pflash->params->page_size;
+                                    pflash->total_number_of_page = pflash->params->flash_size / pflash->params->page_size;
                                     return phandler;
                                 }
                             }
