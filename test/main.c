@@ -2,12 +2,21 @@
 #include <stdio.h>
 
 extern const MunitTest init_tests[];
+extern const MunitTest deinit_tests[];
 
 MunitSuite suites[] = 
 {
     {
     "init",
     init_tests,
+    NULL,
+    1,
+    MUNIT_SUITE_OPTION_NONE,
+    },
+
+    {
+    "deinit",
+    deinit_tests,
     NULL,
     1,
     MUNIT_SUITE_OPTION_NONE,

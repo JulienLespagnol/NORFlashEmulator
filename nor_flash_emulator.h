@@ -38,6 +38,13 @@ typedef struct nor_flash_emulator_handler_t
 /**
  * @brief 
  * 
+ * @param phandler 
+ */
+void nor_flash_emulator_deinit(nor_flash_emulator_handler **phandler);
+
+/**
+ * @brief 
+ * 
  * @param params 
  * @return nor_flash_emulator_handler* 
  */

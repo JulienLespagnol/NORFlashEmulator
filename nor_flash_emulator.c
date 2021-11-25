@@ -33,6 +33,43 @@ typedef struct nor_flash_emulator_flash_t
 /**
  * @brief 
  * 
+ * @param phandler 
+ */
+void nor_flash_emulator_deinit(nor_flash_emulator_handler **phandler)
+{
+    nor_flash_emulator_handler *ph = *phandler;
+    nor_flash_emulator_flash *pflash = NULL;
+
+    if((phandler != NULL) && (*phandler != NULL))
+    {
+        if(ph->params != NULL)
+        {
+            free(ph->params);
+        }
+
+        if(ph->flash != NULL)
+        {
+            pflash = (nor_flash_emulator_flash *)ph->flash;
+
+            if(pflash->params != NULL)
+            {
+                free(pflash->params);
+            }
+
+            if(pflash->buffer != NULL)
+            {
+                free(pflash->buffer);
+            }
+        }
+
+        free(*phandler);
+        *phandler = NULL;
+    }
+}
+
+/**
+ * @brief 
+ * 
  * @param params 
  * @return nor_flash_emulator_handler* 
  */

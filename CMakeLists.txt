@@ -12,7 +12,8 @@ set(SRCS_TEST
 nor_flash_emulator.c
 test/main.c
 munit/munit.c
-test/init_tests.c)
+test/init_tests.c
+test/deinit_tests.c)
 
 set(HEADERS_TEST
 munit/munit.h
