@@ -38,10 +38,10 @@ MunitResult init_must_return_null(const MunitParameter params[], void *user_data
 
 MunitResult init_must_not_return_null(const MunitParameter params[], void *user_data)
 {
-    uint32_t flash_size = 1024;
-    uint32_t sector_size = 1024;
-    uint32_t subsector_size = 1024;
-    uint32_t page_size = 1024;
+    uint32_t page_size = 256;
+    uint32_t subsector_size = (page_size * 16);
+    uint32_t sector_size = (subsector_size * 16);
+    uint32_t flash_size = (sector_size * 127);
 
     nor_flash_emulator_handler *phandler = NULL;
     nor_flash_emulator_params param =
