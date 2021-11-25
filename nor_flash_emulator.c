@@ -33,6 +33,31 @@ typedef struct nor_flash_emulator_flash_t
 /**
  * @brief 
  * 
+ * @param address 
+ * @param len 
+ * @param dest 
+ * @return int 
+ */
+int nor_flash_emulator_read(nor_flash_emulator_handler *phandler, uint32_t address, uint32_t len, uint8_t *dest)
+{
+    int status = -1;
+
+    if ((phandler != NULL) &&
+        (len != 0) &&
+        (dest != NULL) &&
+        ((address + len) <= phandler->params->flash_size))
+    {
+        memset(dest, 0xFF, len);
+
+        status = len;
+    }
+
+    return status;
+}
+
+/**
+ * @brief 
+ * 
  * @param phandler 
  */
 void nor_flash_emulator_deinit(nor_flash_emulator_handler **phandler)
@@ -40,23 +65,23 @@ void nor_flash_emulator_deinit(nor_flash_emulator_handler **phandler)
     nor_flash_emulator_handler *ph = *phandler;
     nor_flash_emulator_flash *pflash = NULL;
 
-    if((phandler != NULL) && (*phandler != NULL))
+    if ((phandler != NULL) && (*phandler != NULL))
     {
-        if(ph->params != NULL)
+        if (ph->params != NULL)
         {
             free(ph->params);
         }
 
-        if(ph->flash != NULL)
+        if (ph->flash != NULL)
         {
             pflash = (nor_flash_emulator_flash *)ph->flash;
 
-            if(pflash->params != NULL)
+            if (pflash->params != NULL)
             {
                 free(pflash->params);
             }
 
-            if(pflash->buffer != NULL)
+            if (pflash->buffer != NULL)
             {
                 free(pflash->buffer);
             }

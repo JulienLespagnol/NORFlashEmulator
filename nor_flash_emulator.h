@@ -35,6 +35,9 @@ typedef struct nor_flash_emulator_handler_t
     void *flash;
 }nor_flash_emulator_handler;
 
+
+int nor_flash_emulator_read(nor_flash_emulator_handler *phandler, uint32_t address, uint32_t len, uint8_t *dest);
+
 /**
  * @brief 
  * 

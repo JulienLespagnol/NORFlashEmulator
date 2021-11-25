@@ -3,6 +3,7 @@
 
 extern const MunitTest init_tests[];
 extern const MunitTest deinit_tests[];
+extern const MunitTest read_tests[];
 
 MunitSuite suites[] = 
 {
@@ -17,6 +18,14 @@ MunitSuite suites[] =
     {
     "deinit",
     deinit_tests,
+    NULL,
+    1,
+    MUNIT_SUITE_OPTION_NONE,
+    },
+
+    {
+    "read",
+    read_tests,
     NULL,
     1,
     MUNIT_SUITE_OPTION_NONE,
