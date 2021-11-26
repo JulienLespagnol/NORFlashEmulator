@@ -268,31 +268,6 @@ nor_flash_emulator_handler *nor_flash_emulator_init(nor_flash_emulator_params *p
         }
     }
 
-    if (phandler != NULL)
-    {
-        if (phandler->params != NULL)
-        {
-            free(phandler->params);
-        }
-
-        if (phandler->flash != NULL)
-        {
-            pflash = phandler->flash;
-
-            if (pflash->buffer != NULL)
-            {
-                free(pflash->buffer);
-            }
-
-            if (pflash->params != NULL)
-            {
-                free(pflash->params);
-            }
-
-            free(phandler->flash);
-        }
-        free(phandler);
-    }
-
+    nor_flash_emulator_deinit(&phandler);
     return NULL;
 }
