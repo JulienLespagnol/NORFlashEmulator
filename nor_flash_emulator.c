@@ -28,7 +28,116 @@ typedef struct nor_flash_emulator_flash_t
     uint32_t total_number_of_subsector;
     uint32_t total_number_of_page;
 
+    bool is_init;
+
 } nor_flash_emulator_flash;
+
+/**
+ * @brief 
+ * 
+ * @param phandler 
+ * @param sector_number 
+ * @return int 
+ */
+int nor_flash_emulator_bulk_erase(nor_flash_emulator_handler *phandler)
+{
+    int i = 0;
+    int status = -1;
+    nor_flash_emulator_flash *pflash = (nor_flash_emulator_flash *)phandler->flash;
+
+    if ((phandler != NULL) &&
+        (pflash != NULL))
+    {
+        memset(pflash->buffer, 0xFF, pflash->params->flash_size);
+        status = 0;
+    }
+
+    return status;
+}
+
+/**
+ * @brief 
+ * 
+ * @param phandler 
+ * @param subsector_number 
+ * @return int 
+ */
+int nor_flash_emulator_erase_sector(nor_flash_emulator_handler *phandler, uint32_t sector_number)
+{
+    int i = 0;
+    int status = -1;
+    nor_flash_emulator_flash *pflash = (nor_flash_emulator_flash *)phandler->flash;
+
+    if ((phandler != NULL) &&
+        (pflash != NULL) &&
+        (sector_number <= pflash->number_of_sector))
+    {
+        memset(pflash->buffer + (sector_number * pflash->params->sector_size), 0xFF, pflash->params->sector_size);
+        status = 0;
+    }
+
+    return status;
+}
+
+/**
+ * @brief 
+ * 
+ * @param phandler 
+ * @param subsector_number 
+ * @return int 
+ */
+int nor_flash_emulator_erase_subsector(nor_flash_emulator_handler *phandler, uint32_t subsector_number)
+{
+    int i = 0;
+    int status = -1;
+    nor_flash_emulator_flash *pflash = (nor_flash_emulator_flash *)phandler->flash;
+
+    if ((phandler != NULL) &&
+        (pflash != NULL) &&
+        (subsector_number <= pflash->total_number_of_subsector))
+    {
+        memset(pflash->buffer + (subsector_number * pflash->params->subsector_size), 0xFF, pflash->params->subsector_size);
+        status = 0;
+    }
+
+    return status;
+}
+
+/**
+ * @brief 
+ * 
+ * @param phandler 
+ * @param address 
+ * @param len 
+ * @param src 
+ * @return int : number of bytes written
+ */
+int nor_flash_emulator_write(nor_flash_emulator_handler *phandler, uint32_t address, uint32_t len, uint8_t *src)
+{
+    int32_t i = 0;
+    int status = -1;
+    nor_flash_emulator_flash *pflash = (nor_flash_emulator_flash *)phandler->flash;
+
+    if ((phandler != NULL) &&
+        (pflash != NULL) &&
+        (len != 0) &&
+        (src != NULL))
+    {
+        if ((address + len) > phandler->params->flash_size)
+        {
+            len = (phandler->params->flash_size - address);
+        }
+
+        for (i = 0; i < len; i++)
+        {
+            *(pflash->buffer + address + i) &= src[i];
+        }
+
+        status = len;
+    }
+
+    return status;
+}
 
 /**
  * @brief 
@@ -36,18 +145,24 @@ typedef struct nor_flash_emulator_flash_t
  * @param address 
  * @param len 
  * @param dest 
- * @return int 
+ * @return int : number of bytes read
  */
 int nor_flash_emulator_read(nor_flash_emulator_handler *phandler, uint32_t address, uint32_t len, uint8_t *dest)
 {
     int status = -1;
+    nor_flash_emulator_flash *pflash = (nor_flash_emulator_flash *)phandler->flash;
 
     if ((phandler != NULL) &&
+        (pflash != NULL) &&
         (len != 0) &&
-        (dest != NULL) &&
-        ((address + len) <= phandler->params->flash_size))
+        (dest != NULL))
     {
-        memset(dest, 0xFF, len);
+        if ((address + len) > phandler->params->flash_size)
+        {
+            len = (phandler->params->flash_size - address);
+        }
+
+        memcpy(dest, pflash->buffer + address, len);
 
         status = len;
     }
@@ -138,6 +253,10 @@ nor_flash_emulator_handler *nor_flash_emulator_init(nor_flash_emulator_params *p
                                     pflash->total_number_of_subsector = pflash->params->flash_size / pflash->params->subsector_size;
                                     pflash->number_of_page_per_subsector = pflash->params->subsector_size / pflash->params->page_size;
                                     pflash->total_number_of_page = pflash->params->flash_size / pflash->params->page_size;
+
+                                    memset(pflash->buffer, 0xFF, pflash->params->flash_size);
+                                    pflash->is_init = true;
+
                                     return phandler;
                                 }
                             }
