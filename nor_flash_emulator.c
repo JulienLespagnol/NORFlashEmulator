@@ -155,7 +155,8 @@ int nor_flash_emulator_read(nor_flash_emulator_handler *phandler, uint32_t addre
     if ((phandler != NULL) &&
         (pflash != NULL) &&
         (len != 0) &&
-        (dest != NULL))
+        (dest != NULL) &&
+        (address <= pflash->params->flash_size))
     {
         if ((address + len) > phandler->params->flash_size)
         {
