@@ -32,6 +32,44 @@ typedef struct nor_flash_emulator_flash_t
 
 } nor_flash_emulator_flash;
 
+static int nor_flash_emulator_flash_init(nor_flash_emulator_flash *pflash, nor_flash_emulator_params *params)
+{
+    int status = -1;
+
+    if ((params->flash_size != 0) &&
+        (params->page_size != 0) &&
+        (params->sector_size != 0) &&
+        (params->subsector_size != 0))
+    {
+        pflash->params = malloc(sizeof(nor_flash_emulator_params));
+        if (pflash->params != NULL)
+        {
+            memcpy(pflash->params, params, sizeof(nor_flash_emulator_params));
+            pflash->buffer = malloc(sizeof(uint8_t) * pflash->params->flash_size);
+
+            if (pflash->buffer != NULL)
+            {
+                if (((pflash->params->flash_size % pflash->params->sector_size) == 0) &&
+                    ((pflash->params->sector_size % pflash->params->subsector_size) == 0) &&
+                    ((pflash->params->subsector_size % pflash->params->page_size) == 0))
+                {
+                    pflash->number_of_sector = pflash->params->flash_size / pflash->params->sector_size;
+                    pflash->number_of_subtector_per_sector = pflash->params->sector_size / pflash->params->subsector_size;
+                    pflash->total_number_of_subsector = pflash->params->flash_size / pflash->params->subsector_size;
+                    pflash->number_of_page_per_subsector = pflash->params->subsector_size / pflash->params->page_size;
+                    pflash->total_number_of_page = pflash->params->flash_size / pflash->params->page_size;
+
+                    memset(pflash->buffer, 0xFF, pflash->params->flash_size);
+                    pflash->is_init = true;
+
+                    status = 0;
+                }
+            }
+        }
+    }
+    return status;
+}
+
 /**
  * @brief 
  * 
@@ -218,10 +256,12 @@ nor_flash_emulator_handler *nor_flash_emulator_init(nor_flash_emulator_params *p
 {
     nor_flash_emulator_handler *phandler = NULL;
     nor_flash_emulator_flash *pflash = NULL;
+    int status = 0;
 
     if (params != NULL)
     {
         phandler = malloc(sizeof(nor_flash_emulator_handler));
+
         if (phandler != NULL)
         {
             phandler->params = malloc(sizeof(nor_flash_emulator_params));
@@ -229,39 +269,16 @@ nor_flash_emulator_handler *nor_flash_emulator_init(nor_flash_emulator_params *p
             if (phandler->params != NULL)
             {
                 memcpy(phandler->params, params, sizeof(nor_flash_emulator_params));
+                phandler->flash = malloc(sizeof(nor_flash_emulator_flash));
 
-                if (phandler->params->flash_size != 0)
+                if (phandler->flash != NULL)
                 {
-                    phandler->flash = malloc(sizeof(nor_flash_emulator_flash));
+                    pflash = (nor_flash_emulator_flash *)phandler->flash;
+                    status = nor_flash_emulator_flash_init(pflash, phandler->params);
 
-                    if (phandler->flash != NULL)
+                    if (status == 0)
                     {
-                        pflash = (nor_flash_emulator_flash *)phandler->flash;
-                        pflash->params = malloc(sizeof(nor_flash_emulator_params));
-                        if (pflash->params != NULL)
-                        {
-                            memcpy(pflash->params, phandler->params, sizeof(nor_flash_emulator_params));
-                            pflash->buffer = malloc(sizeof(uint8_t) * phandler->params->flash_size);
-
-                            if (pflash->buffer != NULL)
-                            {
-                                if (((pflash->params->flash_size % pflash->params->sector_size) == 0) &&
-                                    ((pflash->params->sector_size % pflash->params->subsector_size) == 0) &&
-                                    ((pflash->params->subsector_size % pflash->params->page_size) == 0))
-                                {
-                                    pflash->number_of_sector = pflash->params->flash_size / pflash->params->sector_size;
-                                    pflash->number_of_subtector_per_sector = pflash->params->sector_size / pflash->params->subsector_size;
-                                    pflash->total_number_of_subsector = pflash->params->flash_size / pflash->params->subsector_size;
-                                    pflash->number_of_page_per_subsector = pflash->params->subsector_size / pflash->params->page_size;
-                                    pflash->total_number_of_page = pflash->params->flash_size / pflash->params->page_size;
-
-                                    memset(pflash->buffer, 0xFF, pflash->params->flash_size);
-                                    pflash->is_init = true;
-
-                                    return phandler;
-                                }
-                            }
-                        }
+                        return phandler;
                     }
                 }
             }
