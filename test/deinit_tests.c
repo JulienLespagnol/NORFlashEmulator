@@ -1,3 +1,13 @@
+/**
+ * @file deinit_tests.c
+ * @author Julien Lespagnol (lespagnolj@gmail.com)
+ * @brief 
+ * @version 0.1
+ * @date 2021-11-26
+ * 
+ * @copyright Copyright (c) 2021
+ * 
+ */
 #include "../munit/munit.h"
 #include "../nor_flash_emulator.h"
 

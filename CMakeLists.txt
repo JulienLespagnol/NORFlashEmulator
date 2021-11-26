@@ -14,7 +14,7 @@ test/main.c
 munit/munit.c
 test/init_tests.c
 test/deinit_tests.c
-test/read_tests.c)
+test/read_write_tests.c)
 
 set(HEADERS_TEST
 munit/munit.h
