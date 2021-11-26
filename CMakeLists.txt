@@ -10,11 +10,8 @@ add_executable(main ${SRCS_MAIN})
 # unit tests target
 set(SRCS_TEST
 nor_flash_emulator.c
-test/main.c
-munit/munit.c
-test/init_tests.c
-test/deinit_tests.c
-test/read_write_tests.c)
+tests.c
+munit/munit.c)
 
 set(HEADERS_TEST
 munit/munit.h
