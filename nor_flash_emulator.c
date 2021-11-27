@@ -14,6 +14,7 @@
 #include <stddef.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdio.h>
 
 typedef struct nor_flash_emulator_flash_t
 {
@@ -93,7 +94,11 @@ int nor_flash_emulator_save_to_file(nor_flash_emulator_handler *phandler, void *
     (pflash != NULL) && \
     (file != NULL))
     {
-        status = 0;
+        status = fwrite(pflash->buffer, sizeof(uint8_t), pflash->params->flash_size, file);
+        if(status == pflash->params->flash_size)
+        {
+            status = 0;
+        }
     }
     return status;
 }
