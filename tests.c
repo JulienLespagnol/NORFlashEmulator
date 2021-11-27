@@ -178,6 +178,7 @@ MunitResult write_read_ok_after_init(const MunitParameter params[], void *user_d
     uint8_t read_buffer[RW_TEST_BUFF_LEN];
     uint32_t i = 0;
     int status = 0;
+    FILE *file = NULL;
 
     for (i = 0; i < phandler_rw->params->flash_size; i += RW_TEST_BUFF_LEN)
     {
@@ -185,6 +186,18 @@ MunitResult write_read_ok_after_init(const MunitParameter params[], void *user_d
         munit_assert_memory_equal(RW_TEST_BUFF_LEN, read_buffer, erased_value);
         munit_assert_int(status, ==, RW_TEST_BUFF_LEN);
     }
+
+    file = fopen("./save.bin", "wb");
+    status = nor_flash_emulator_save_to_file(phandler_rw, file);
+
+    for (i = 0; i < phandler_rw->params->flash_size; i += RW_TEST_BUFF_LEN)
+    {
+        status = fread(read_buffer, sizeof(uint8_t), RW_TEST_BUFF_LEN, file);
+        munit_assert_memory_equal(RW_TEST_BUFF_LEN, read_buffer, erased_value);
+        munit_assert_int(status, ==, RW_TEST_BUFF_LEN);
+    }
+
+    fclose(file);
 
     return MUNIT_OK;
 }

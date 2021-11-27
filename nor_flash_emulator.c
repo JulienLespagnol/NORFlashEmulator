@@ -32,6 +32,13 @@ typedef struct nor_flash_emulator_flash_t
 
 } nor_flash_emulator_flash;
 
+/**
+ * @brief 
+ * 
+ * @param pflash 
+ * @param params 
+ * @return int 
+ */
 static int nor_flash_emulator_flash_init(nor_flash_emulator_flash *pflash, nor_flash_emulator_params *params)
 {
     int status = -1;
@@ -70,6 +77,26 @@ static int nor_flash_emulator_flash_init(nor_flash_emulator_flash *pflash, nor_f
     return status;
 }
 
+/**
+ * @brief 
+ * 
+ * @param phandler 
+ * @param file 
+ * @return int 
+ */
+int nor_flash_emulator_save_to_file(nor_flash_emulator_handler *phandler, void *file)
+{
+    int status = -1;
+    nor_flash_emulator_flash *pflash = (nor_flash_emulator_flash *)phandler->flash;
+
+    if((phandler != NULL) && \
+    (pflash != NULL) && \
+    (file != NULL))
+    {
+        status = 0;
+    }
+    return status;
+}
 /**
  * @brief 
  * 

@@ -40,6 +40,14 @@ typedef struct nor_flash_emulator_handler_t
  * @brief 
  * 
  * @param phandler 
+ * @param file 
+ * @return int 
+ */
+int nor_flash_emulator_save_to_file(nor_flash_emulator_handler *phandler, void *file);
+/**
+ * @brief 
+ * 
+ * @param phandler 
  * @param sector_number 
  * @return int 
  */
